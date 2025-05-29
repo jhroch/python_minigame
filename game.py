@@ -14,11 +14,10 @@ bonusMultiplier: float = 1
 
 class Player:
     def __init__(self, x, y, points):
-        self.x = x
-        self.y = y
         self.points = points
         self.body = [(x,y)] # self.body[0] = hlava/start
         self.grow = False
+        self.direction = None
         
     def move(self, dx, dy):
         #if(0 <= self.body[0][0] + 1 < width):
@@ -33,8 +32,6 @@ class Player:
     def inc(self):
         self.points = self.points+1
         self.grow = True
-        
-    
 
 class Korist:
     def __init__(self, x, y):
@@ -66,8 +63,8 @@ def gameOver(stdscr) -> None:
         key = stdscr.getch()
         if(key == ord('q')): break
         if(key == ord('r')):
-            player.x = 0
-            player.y = 0
+            player.body.clear()
+            player.body.append((0,0))
             player.points = 0
             main(stdscr)
         stdscr.refresh()
@@ -93,17 +90,29 @@ def main(stdscr):
         if(key == curses.KEY_RIGHT): direction = "right"
         match direction:
             case "up":
-                if player.move(0, -1) == 1:
-                    break
+                if player.direction == "down": 
+                    direction = "down"
+                    continue
+                player.move(0, -1)
+                player.direction = "up"
             case "down":
-                if player.move(0, 1) == 1:
-                    break
+                if player.direction == "up": 
+                    direction = "up"
+                    continue
+                player.move(0, 1)
+                player.direction = "down"
             case "left":
-                if player.move(-1, 0) == 1:
-                    break
+                if player.direction == "right": 
+                    direction = "right"
+                    continue
+                player.move(-1, 0)
+                player.direction = "left"
             case "right":
-                if player.move(1, 0) == 1:
-                    break
+                if player.direction == "left": 
+                    direction = "left"
+                    continue
+                player.move(1, 0)
+                player.direction = "right"
             case _:
                 continue
 
