@@ -1,3 +1,6 @@
+# Python minigame
+# Author: Jiří Hroch
+
 import curses
 import random
 import time
