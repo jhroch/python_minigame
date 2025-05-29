@@ -5,6 +5,7 @@ import curses
 import random
 import time
 
+# Settings
 size: int = 8
 timeLimit: int = 5
 bonusMultiplier: float = 1
