@@ -1,7 +1,10 @@
 import curses
 import random
+import time
 
 size: int = 8
+timeLimit: int = 5
+bonusMultiplier: float = 1
 
 class Player:
     def __init__(self, x, y, points):
@@ -30,8 +33,9 @@ class Korist:
 
 player = Player(0, 0, 0)
 korist = Korist(random.randint(0, size-1), random.randint(0, size-1))
+startTime = time.time()
 
-def printGame(stdscr) -> None:
+def printGame(stdscr, timeLeft) -> None:
     for i in range(size):
         for j in range(size):
             stdscr.addstr("+-")
@@ -45,26 +49,39 @@ def printGame(stdscr) -> None:
         stdscr.addstr("+-")
     stdscr.addstr("+\n",)
     stdscr.addstr(f"Points: {player.points}\n")
+    stdscr.addstr(f"Time left: {timeLeft}\n")
+    
+def gameOver(stdscr) -> None:
+    while(1):
+        stdscr.clear()
+        stdscr.addstr(f"GAME OVER!\nYou've had {player.points} points. Congratulation!\nPress q for exit")
+        key = stdscr.getch()
+        if(key == ord('q')): break
+        stdscr.refresh()
+        
 
 
 def main(stdscr):
     curses.curs_set(0) # Skryje kurzor
+    stdscr.timeout(1000)
     while(1):
+        timeLeft = timeLimit - int(time.time()-startTime) + player.points*bonusMultiplier
         stdscr.clear()
         if(player.x == korist.x and player.y == korist.y):
             player.inc()
             korist.x = random.randint(0, size-1)
             korist.y = random.randint(0, size-1)
-        printGame(stdscr)
+        printGame(stdscr, timeLeft)
         stdscr.refresh()
         key = stdscr.getch()
         if(key == ord('q')): break
+        if(timeLeft < 1): break
         if(key == curses.KEY_UP): player.up()
         if(key == curses.KEY_DOWN): player.down()
         if(key == curses.KEY_LEFT): player.left()
         if(key == curses.KEY_RIGHT): player.right()
-        
         else: continue
+    gameOver(stdscr)
 
 curses.wrapper(main)
         
